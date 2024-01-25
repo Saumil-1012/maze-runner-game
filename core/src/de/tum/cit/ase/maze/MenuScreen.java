@@ -43,8 +43,8 @@ public class MenuScreen implements Screen {
         table.add(new Label("Maze Runner", game.getSkin(), "title")).padBottom(80).row();
 
         // Load background image
-        backgroundTexture = new Texture(Gdx.files.internal("/Users/saumilsavani/IdeaProjects/fophn2324infun2324projectworkx-shield/assets/photo.jpg"));
-
+        backgroundTexture = new Texture(Gdx.files.internal("photo1.jpg.png"));
+        //table.setBackground((Drawable) backgroundTexture);
         // Create and add a button to go to the game screen
         // Add menu buttons
         TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
@@ -91,6 +91,9 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear the screen
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f)); // Update the stage
+        stage.getBatch().begin();
+        stage.getBatch().draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage.getBatch().end();
         stage.draw(); // Draw the stage
     }
 
