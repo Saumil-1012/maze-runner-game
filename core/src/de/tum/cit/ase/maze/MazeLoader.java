@@ -1,5 +1,4 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;

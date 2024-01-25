@@ -83,8 +83,6 @@ public class GameScreen implements Screen {
     }
 
 
-
-
     //
     private void loadSounds() {
         AssetManager assetManager = new AssetManager();

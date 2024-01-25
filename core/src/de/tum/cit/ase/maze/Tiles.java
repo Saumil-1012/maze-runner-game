@@ -3,7 +3,6 @@ package de.tum.cit.ase.maze;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
 public class Tiles extends JFrame {
 
     private final int tileSize = 32; // size of each tile
