@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class MenuScreen implements Screen {
 
     private final Stage stage;
+    private Texture backgroundTexture;
 
     /**
      * Constructor for MenuScreen. Sets up the camera, viewport, stage, and UI elements.
@@ -38,17 +40,51 @@ public class MenuScreen implements Screen {
         stage.addActor(table); // Add the table to the stage
 
         // Add a label as a title
-        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(80).row();
+        table.add(new Label("Maze Runner", game.getSkin(), "title")).padBottom(80).row();
+
+        // Load background image
+        backgroundTexture = new Texture(Gdx.files.internal("/Users/saumilsavani/IdeaProjects/fophn2324infun2324projectworkx-shield/assets/photo.jpg"));
 
         // Create and add a button to go to the game screen
+        // Add menu buttons
         TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
-        table.add(goToGameButton).width(300).row();
+        TextButton continueButton = new TextButton("Continue", game.getSkin());
+        TextButton newGameButton = new TextButton("New Game", game.getSkin());
+        TextButton exitButton = new TextButton("Exit", game.getSkin());
+
         goToGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.goToGame(); // Change to the game screen when button is pressed
+                game.setScreen(new GameScreen(game)); // Change to the game screen when button is pressed
             }
         });
+
+        continueButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GameScreen(game));
+            }
+        });
+
+        newGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GameScreen(game));
+            }
+        });
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+               game.setScreen(new GameScreen(game));
+            }
+        });
+
+        // Add buttons to the table
+        table.add(goToGameButton).padBottom(20).row();
+        table.add(continueButton).padBottom(20).row();
+        table.add(newGameButton).padBottom(20).row();
+        table.add(exitButton).padBottom(20);
+
     }
 
     @Override
@@ -72,6 +108,7 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         // Set the input processor so the stage can receive input events
+
         Gdx.input.setInputProcessor(stage);
     }
 
