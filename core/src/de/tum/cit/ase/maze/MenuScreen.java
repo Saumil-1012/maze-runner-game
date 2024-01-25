@@ -40,10 +40,10 @@ public class MenuScreen implements Screen {
         stage.addActor(table); // Add the table to the stage
 
         // Add a label as a title
-        table.add(new Label("Hello World from The Menu", game.getSkin(), "title")).padBottom(80).row();
+        table.add(new Label("Maze Runner", game.getSkin(), "title")).padBottom(80).row();
 
         // Load background image
-        backgroundTexture = new Texture(Gdx.files.internal("photo.jpg"));
+        backgroundTexture = new Texture(Gdx.files.internal("/Users/saumilsavani/IdeaProjects/fophn2324infun2324projectworkx-shield/assets/photo.jpg"));
 
         // Create and add a button to go to the game screen
         // Add menu buttons
@@ -55,7 +55,7 @@ public class MenuScreen implements Screen {
         goToGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.goToGame(); // Change to the game screen when button is pressed
+                game.setScreen(new GameScreen(game)); // Change to the game screen when button is pressed
             }
         });
 
@@ -85,8 +85,6 @@ public class MenuScreen implements Screen {
         table.add(newGameButton).padBottom(20).row();
         table.add(exitButton).padBottom(20);
 
-        backgroundTexture = new Texture(Gdx.files.internal("photo.jpg"));
-
     }
 
     @Override
@@ -110,6 +108,7 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
         // Set the input processor so the stage can receive input events
+
         Gdx.input.setInputProcessor(stage);
     }
 

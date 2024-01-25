@@ -3,6 +3,9 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -18,6 +21,14 @@ public class GameScreen implements Screen {
     private final BitmapFont font;
 
     private float sinusInput = 0f;
+
+    //
+    private Object keyCollectedSound;
+    private Object lifeLostSound;
+    private Object backgroundMusic;
+    private Object gameOverSound;
+    private Object victorySound;
+    //
 
     /**
      * Constructor for GameScreen. Sets up the camera and font.
@@ -74,6 +85,29 @@ public class GameScreen implements Screen {
         game.getSpriteBatch().end(); // Important to call this after drawing everything
     }
 
+
+
+
+    //
+    private void loadSounds() {
+        AssetManager assetManager = new AssetManager();
+        assetManager.load("background_music.mp3", Music.class);
+        assetManager.load("life_lost_sound.mp3", Sound.class);
+        assetManager.load("key_collected_sound.mp3", Sound.class);
+        assetManager.load("victory_sound.mp3", Sound.class);
+        assetManager.load("game_over_sound.mp3", Sound.class);
+        assetManager.finishLoading();
+
+        backgroundMusic = assetManager.get("background_music.mp3");
+        lifeLostSound = assetManager.get("life_lost_sound.mp3");
+        keyCollectedSound = assetManager.get("key_collected_sound.mp3");
+        victorySound = assetManager.get("victory_sound.mp3");
+        gameOverSound = assetManager.get("game_over_sound.mp3");
+    }
+
+
+
+    //
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false);
