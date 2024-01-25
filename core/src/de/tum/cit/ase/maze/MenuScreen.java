@@ -38,7 +38,9 @@ public class MenuScreen implements Screen {
         stage.addActor(table); // Add the table to the stage
 
         // Add a label as a title
-        table.add(new Label("Hello World from the Menu!", game.getSkin(), "title")).padBottom(80).row();
+        table.add(new Label("Maze Runner", game.getSkin(), "title")).padBottom(80).row();
+
+
 
         // Create and add a button to go to the game screen
         TextButton goToGameButton = new TextButton("Go To Game", game.getSkin());
@@ -49,6 +51,40 @@ public class MenuScreen implements Screen {
                 game.goToGame(); // Change to the game screen when button is pressed
             }
         });
+
+        // Add menu buttons
+        TextButton continueButton = new TextButton("Continue", game.getSkin());
+        TextButton newGameButton = new TextButton("New Game", game.getSkin());
+        TextButton exitButton = new TextButton("Exit", game.getSkin());
+
+        continueButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GameScreen(game));
+            }
+        });
+
+        newGameButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GameScreen(game));
+            }
+        });
+        exitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+               game.setScreen(new GameScreen(game));
+            }
+        });
+
+        // Add buttons to the table
+        table.add(continueButton).padBottom(300).row();
+        table.add(newGameButton).padBottom(300).row();
+        table.add(exitButton).padBottom(300);
+
+
+
+
     }
 
     @Override
