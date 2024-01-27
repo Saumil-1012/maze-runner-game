@@ -18,4 +18,3 @@ public class Key {
 
     // Implement other key-specific logic
 }
-
