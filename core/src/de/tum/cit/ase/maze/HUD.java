@@ -1,5 +1,4 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
