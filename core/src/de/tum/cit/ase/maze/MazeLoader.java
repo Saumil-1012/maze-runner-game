@@ -1,80 +1,44 @@
 package de.tum.cit.ase.maze;
 
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Properties;
 
-public class MazeLoader  implements Screen {
-    
-        private HUD hud;
-    private SpriteBatch batch;
+public class MazeLoader {
+    public static Maze loadMazeFromPath(String path) {
+        Properties properties = new Properties();
+        Maze maze = new Maze();
 
-    // ... Other class members and methods ...
-
-        @Override
-        public void show() {
-            // Initialize HUD
-            hud = new HUD();
+        try {
+            FileInputStream fileInputStream = new FileInputStream(path);
+            properties.load(fileInputStream);
+            for (String key : properties.stringPropertyNames()) {
+                try {
+                    int x = Integer.parseInt(key.split(",")[0]);
+                    int y = Integer.parseInt(key.split(",")[1]);
+                    TileType type = TileType.parseString(properties.getProperty(key));
+                    Tile tile = new Tile(x, y, type);
+                    maze.setTile(x, y, tile);
+                } catch (Exception e) {}
+            }
+        } catch (Exception e) {
+            return null;
         }
 
-        @Override
-        public void render(float delta) {
-            // Update HUD based on game events (e.g., player's lives, key collection)
-            boolean hasKey;
-            hasKey = false;
-            int playerLives = 0;
-            hud.update(playerLives, hasKey);
+        return maze;
+    }
 
-            // Render the game and HUD
-            batch.begin();
-            // ... Render the maze, characters, etc.
-            batch.end();
-
-            // Draw the HUD on top of the game
-            hud.draw(batch);
+    // Loads mazes from "/maps/*.properties" files
+    public static ArrayList<Maze> loadMazesInDir() {
+        ArrayList<Maze> mazes = new ArrayList<>();
+        String workingDirectory = System.getProperty("user.dir");
+        File mapsDirectory = new File(workingDirectory, "maps");
+        for (File file : mapsDirectory.listFiles()) {
+            if (file.getAbsolutePath().endsWith(".properties")) {
+                mazes.add(loadMazeFromPath(file.getAbsolutePath()));
+            }
         }
-
-    @Override
-    public void resize(int width, int height) {
-        
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
-
-    }
-
-    // ... Other methods...
-
-        @Override
-        public void dispose() {
-            // Dispose of HUD resources when the screen is disposed
-            hud.dispose();
-        }
-    
-
-    private int currentMapIndex;
-    private String[] mapFiles = {"maps/maze1.txt", "maps/maze2.txt", "maps/maze3.txt"};
-
-    public MazeLoader() {
-        currentMapIndex = 0;
-    }
-
-    public void loadNextMap(String mapFile) {
-        if (currentMapIndex < mapFiles.length) {
-            loadNextMap(mapFiles[currentMapIndex]);
-            currentMapIndex++;
-        } else {
-            // All maps loaded, you may want to handle this situation
-        }
+        return mazes;
     }
 }

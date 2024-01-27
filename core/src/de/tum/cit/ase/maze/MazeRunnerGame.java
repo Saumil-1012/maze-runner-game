@@ -1,5 +1,4 @@
 package de.tum.cit.ase.maze;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -25,6 +24,7 @@ public class MazeRunnerGame extends Game {
 
     // UI Skin
     private Skin skin;
+    private Maze lastMaze;
 
     // Character animation downwards
     private Animation<TextureRegion> characterDownAnimation;
@@ -45,6 +45,7 @@ public class MazeRunnerGame extends Game {
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
+        TextureProvider.init(); // Initialize textures
         this.loadCharacterAnimation(); // Load character animation
 
         // Play some background music
@@ -71,7 +72,7 @@ public class MazeRunnerGame extends Game {
      * Switches to the game screen.
      */
     public void goToGame() {
-        this.setScreen(new GameScreen(this)); // Set the current screen to GameScreen
+        this.setScreen(new GameScreen(this, lastMaze)); // Set the current screen to GameScreen
         if (menuScreen != null) {
             menuScreen.dispose(); // Dispose the menu screen if it exists
             menuScreen = null;
@@ -121,5 +122,9 @@ public class MazeRunnerGame extends Game {
 
     public SpriteBatch getSpriteBatch() {
         return spriteBatch;
+    }
+
+    public void setMaze(Maze maze) {
+        this.lastMaze = maze;
     }
 }
