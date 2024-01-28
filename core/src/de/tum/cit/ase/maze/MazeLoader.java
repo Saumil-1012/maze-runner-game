@@ -1,5 +1,7 @@
 package de.tum.cit.ase.maze;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -46,5 +48,18 @@ public class MazeLoader {
             }
         }
         return mazes;
+    }
+
+    public static Maze loadMazeFromSelectDialog() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Maze Levels (Properties)", "properties"));
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
+        int selection = fileChooser.showOpenDialog(null);
+        if (selection == JFileChooser.APPROVE_OPTION) {
+            String path = fileChooser.getSelectedFile().getAbsolutePath();
+            return loadMazeFromPath(path);
+        }
+        return null;
     }
 }
