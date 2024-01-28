@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import games.spooky.gdx.nativefilechooser.NativeFileChooser;
@@ -44,6 +45,7 @@ public class MazeRunnerGame extends Game {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch(); // Create SpriteBatch
+        spriteBatch.enableBlending();
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         TextureProvider.init(); // Initialize textures
         this.loadCharacterAnimation(); // Load character animation
@@ -52,7 +54,7 @@ public class MazeRunnerGame extends Game {
         // Background sound
         Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
         backgroundMusic.setLooping(true);
-        backgroundMusic.play();
+//        backgroundMusic.play();
 
         goToMenu(); // Navigate to the menu screen
     }

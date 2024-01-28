@@ -8,7 +8,7 @@ public class Collider {
         this.boundingBox = boundingBox;
     }
 
-    public boolean isColliding(Tile collider) {
+    public boolean isColliding(Collider collider) {
         return boundingBox.overlaps(collider.boundingBox);
     }
 }

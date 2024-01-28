@@ -18,8 +18,14 @@ public class MazeLoader {
                     int x = Integer.parseInt(key.split(",")[0]);
                     int y = Integer.parseInt(key.split(",")[1]);
                     TileType type = TileType.parseString(properties.getProperty(key));
-                    Tile tile = new Tile(x, y, type);
-                    maze.setTile(x, y, tile);
+                    if (type == TileType.ENEMY) {
+                        maze.addEnemy(new Enemy(x, y, maze));
+                    } else if (type == TileType.TRAP) {
+                        maze.addTrap(new Trap(x, y));
+                    } else {
+                        Tile tile = new Tile(x, y, type);
+                        maze.setTile(x, y, tile);
+                    }
                 } catch (Exception e) {}
             }
         } catch (Exception e) {

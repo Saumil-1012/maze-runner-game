@@ -10,6 +10,7 @@ public class Enemy extends MovableEntity {
     private Vector2 position;
     private Direction direction;
     private float localTime = 0f;
+    private AttackingEntity attackingEntity;
 
     public Enemy(int x, int y, Maze maze) {
         super(new Rectangle(0, 0, 0, 0), maze, 0.25f);
@@ -19,19 +20,19 @@ public class Enemy extends MovableEntity {
         origY = y;
         setPosition(x*Constants.TILE_SIZE, y*Constants.TILE_SIZE);
         boundingBox.setSize(Constants.TILE_SIZE);
+        this.attackingEntity = new AttackingEntity();
+        opaqueTileTypes.add(TileType.ENTRY);
+        opaqueTileTypes.add(TileType.EXIT);
     }
 
     private Direction getRandomDirection() {
-        // Pick a random direction
         int dir = random.nextInt(4);
-        switch (dir) {
-            case 0: return Direction.UP;
-            case 1: return Direction.RIGHT;
-            case 2: return Direction.DOWN;
-            case 3: return Direction.LEFT;
-        }
-
-        return Direction.UP;
+        return switch (dir) {
+            case 0 -> Direction.UP;
+            case 1 -> Direction.RIGHT;
+            case 2 -> Direction.DOWN;
+            default -> Direction.LEFT;
+        };
     }
 
     public void update(float delta) {
@@ -47,6 +48,9 @@ public class Enemy extends MovableEntity {
         }
 
         move(direction);
+        attackingEntity.update(delta);
     }
+
+    public AttackingEntity getAttackingEntity() { return attackingEntity; }
 }
 

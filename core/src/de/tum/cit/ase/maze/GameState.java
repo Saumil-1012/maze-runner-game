@@ -1,8 +1,8 @@
 package de.tum.cit.ase.maze;
 
 public class GameState {
-    private Maze maze;
-    private Character character;
+    private final Maze maze;
+    private final Character character;
 
     public GameState(Maze maze, Character character) {
         this.maze = maze;

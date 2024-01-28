@@ -6,11 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Maze {
-    private ArrayList<ArrayList<Tile>> tiles;
+    private final ArrayList<ArrayList<Tile>> tiles;
+    private final ArrayList<Enemy> enemies;
+    private final ArrayList<Trap> traps;
     private int m, n; // Dimensions of maze: m x n
+    private int totalKeys = 0;
 
     public Maze() {
         tiles = new ArrayList<>();
+        enemies = new ArrayList<>();
+        traps = new ArrayList<>();
         m = n = 0;
         adjustSize();
     }
@@ -31,15 +36,32 @@ public class Maze {
         if (y+1 > n) n = y+1;
         adjustSize();
         tiles.get(x).set(y, tile);
+        if (tile.getType() == TileType.KEY) {
+            totalKeys++;
+        }
+    }
+
+    public void addEnemy(Enemy enemy) {
+        enemies.add(enemy);
+    }
+
+    public void addTrap(Trap trap) {
+        traps.add(trap);
     }
 
     public int getM() { return m; }
 
     public int getN() { return n; }
     public Tile getTile(int x, int y) {
+        if (x < 0 || x >= m || y < 0 || y >= n) return null;
         return tiles.get(x).get(y);
     }
 
     public void restart() {
     }
+
+    public ArrayList<Enemy> getEnemies() { return enemies; }
+    public ArrayList<Trap> getTraps() { return traps; }
+
+    public int getTotalKeys() { return totalKeys; }
 }

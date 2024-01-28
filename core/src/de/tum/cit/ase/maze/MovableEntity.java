@@ -3,16 +3,21 @@ package de.tum.cit.ase.maze;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class MovableEntity extends Collider {
     protected Vector2 position;
     protected Maze maze;
     private float moveSpeed;
+    protected ArrayList<TileType> opaqueTileTypes = new ArrayList<>();
+    private Direction lastDirection = Direction.DOWN;
 
     public MovableEntity(Rectangle rectangle, Maze maze, float moveSpeed) {
         super(rectangle);
         this.position = new Vector2(0, 0);
         this.maze = maze;
         this.moveSpeed = moveSpeed;
+        opaqueTileTypes.add(TileType.WALL);
     }
 
     public void setPosition(Vector2 position) {
@@ -23,6 +28,7 @@ public class MovableEntity extends Collider {
     public Vector2 getPosition() { return position; }
 
     public void move(Direction direction) {
+        lastDirection = direction;
         Vector2 diff = direction.getVector();
         if (canMove(diff.x, diff.y)) {
             setPosition(new Vector2(position.x + diff.x*moveSpeed, position.y + diff.y*moveSpeed));
@@ -66,8 +72,17 @@ public class MovableEntity extends Collider {
 
     protected boolean isCollidingWithTile(int tileX, int tileY) {
         Tile tile = maze.getTile(tileX, tileY);
-        if (tile == null || tile.getType() != TileType.WALL) return false;
+        if (tile == null) return false;
+        int matches = 0;
+        for (TileType type : opaqueTileTypes) {
+            if (type == tile.getType()) {
+                matches++;
+            }
+        }
+        if (matches == 0) return false;
         return isColliding(tile);
     }
+
+    public Direction getLastDirection() { return lastDirection; }
 }
 
