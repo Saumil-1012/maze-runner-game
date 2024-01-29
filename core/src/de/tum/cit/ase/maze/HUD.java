@@ -14,6 +14,8 @@ public class HUD {
     private final GameState gameState;
     private final Stage stage;
     private final Image keyImage;
+    private final Image speedImage;
+    private final Label speedLabel;
     private final Image[] livesImages;
 
     public HUD(MazeRunnerGame game, GameState gameState) {
@@ -38,10 +40,19 @@ public class HUD {
         keyImage.setDrawable(new TransparentDrawable());
         table.add(keyImage).padLeft(20).padBottom(-20);
 
+        speedImage = new Image();
+        speedImage.setScale(2);
+        speedImage.setDrawable(new TransparentDrawable());
+        table.add(speedImage).padLeft(20).padBottom(-20);
+
+        speedLabel = new Label("", game.getSkin());
+        table.add(speedLabel).padLeft(30);
+
         table.left().bottom().padBottom(20); // Align the table to the top right
     }
 
     private boolean areEnoughKeys() { return gameState.getCharacter().keys >= gameState.getMaze().getTotalKeys(); }
+    private boolean isSpeedBoostActive() { return gameState.getCharacter().isSpeedBoostActive(); }
 
     public void render(float delta) {
         for (int i = 0; i < livesImages.length; i++) {
@@ -54,6 +65,16 @@ public class HUD {
 
         if (areEnoughKeys()) {
             keyImage.setDrawable(new TextureRegionDrawable(TextureProvider.getTextureForTileType(TileType.KEY)));
+        } else {
+            keyImage.setDrawable(new TransparentDrawable());
+        }
+
+        if (isSpeedBoostActive()) {
+            speedImage.setDrawable(new TextureRegionDrawable(TextureProvider.getTextureForTileType(TileType.SPEED)));
+            speedLabel.setText(Math.round(gameState.getCharacter().getSpeedBoostLeftTime()) + " sec");
+        } else {
+            speedImage.setDrawable(new TransparentDrawable());
+            speedLabel.setText("");
         }
 
         stage.act(delta);
@@ -63,4 +84,6 @@ public class HUD {
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
     }
+
+    public Stage getStage() { return stage; }
 }

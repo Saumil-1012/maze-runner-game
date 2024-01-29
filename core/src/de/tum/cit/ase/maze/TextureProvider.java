@@ -16,6 +16,9 @@ public class TextureProvider {
     private static TextureRegion tExit;
     private static TextureRegion tTrap;
     private static TextureRegion tKey;
+    private static TextureRegion tSpeed;
+    private static TextureRegion tFog;
+    private static TextureRegion tFogLight;
 
     private static TextureRegion tCharacter;
     private static TextureRegion tEnemy;
@@ -41,6 +44,9 @@ public class TextureProvider {
         tExit = extractTextureRegion(basicTiles,1,6);
         tTrap = extractTextureRegion(basicTiles,2,9);
         tKey = extractTextureRegion(objects,0,4);
+        tSpeed = extractTextureRegion(objects,0,0);
+        tFog = extractTextureRegion(objects,0,5);
+        tFogLight = extractTextureRegion(objects,1,5);
         tCharacter = extractTextureRegion(mobs, 4, 0);
         tEnemy = extractTextureRegion(mobs, 10, 0);
 
@@ -138,6 +144,7 @@ public class TextureProvider {
             case TRAP: return tTrap;
             case ENEMY: return tEnemy;
             case KEY: return tKey;
+            case SPEED: return tSpeed;
         }
         return null;
     }
@@ -172,4 +179,6 @@ public class TextureProvider {
     }
 
     public static TextureRegion getGroundTexture() { return tGround; }
+    public static TextureRegion getFogTexture() { return tFog; }
+    public static TextureRegion getFogLightTexture() { return tFogLight; }
 }

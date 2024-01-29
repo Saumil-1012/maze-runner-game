@@ -1,9 +1,11 @@
 package de.tum.cit.ase.maze;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -26,6 +28,8 @@ public class MenuScreen implements Screen {
     private final Table table2;
     private ArrayList<Maze> mazes;
     private Texture backgroundTexture;
+    private OrthographicCamera camera;
+    private MazeRunnerGame game;
 
     /**
      * Constructor for MenuScreen. Sets up the camera, viewport, stage, and UI elements.
@@ -33,8 +37,9 @@ public class MenuScreen implements Screen {
      * @param game The main game class, used to access global resources and methods.
      */
     public MenuScreen(MazeRunnerGame game) {
+        this.game = game;
         mazes = MazeLoader.loadMazesInDir();
-        var camera = new OrthographicCamera();
+        camera = new OrthographicCamera();
         camera.zoom = 1.5f; // Set camera zoom for a closer view
 
         Viewport viewport = new ScreenViewport(camera); // Create a viewport with the camera
@@ -92,6 +97,21 @@ public class MenuScreen implements Screen {
             table2.add(button).padBottom(20).row();
         }
 
+        TextButton loadButton = new TextButton("Load", game.getSkin());
+
+        loadButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Maze maze = MazeLoader.loadMazeFromSelectDialog();
+                if (maze != null) {
+                    game.setMaze(maze);
+                    game.goToGame();
+                }
+            }
+        });
+
+        table2.add(loadButton).padBottom(20).row();
+
         TextButton backButton = new TextButton("Back", game.getSkin());
 
         backButton.addListener(new ChangeListener() {
@@ -110,9 +130,32 @@ public class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clear the screen
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f)); // Update the stage
         stage.getBatch().begin();
-        stage.getBatch().draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        drawBackground(game.getSpriteBatch());
         stage.getBatch().end();
         stage.draw(); // Draw the stage
+    }
+
+    private void drawBackground(SpriteBatch batch) {
+        float screenWidth = Gdx.graphics.getWidth();
+        float screenHeight = Gdx.graphics.getHeight();
+
+        // Calculate the scaling factors for width and height independently
+        float widthScale = screenWidth / backgroundTexture.getWidth();
+        float heightScale = screenHeight / backgroundTexture.getHeight();
+
+        // Determine the scale to use based on the larger scaling factor
+        float scale = Math.max(widthScale, heightScale) * camera.zoom;
+
+        // Calculate the dimensions to draw the wallpaper
+        float drawWidth = backgroundTexture.getWidth() * scale;
+        float drawHeight = backgroundTexture.getHeight() * scale;
+
+        // Calculate the position to center the wallpaper
+        float x = (screenWidth - drawWidth) / 2;
+        float y = (screenHeight - drawHeight) / 2;
+
+        // Draw the wallpaper
+        batch.draw(backgroundTexture, x, y, drawWidth, drawHeight);
     }
 
     @Override
@@ -128,8 +171,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-        // Set the input processor so the stage can receive input events
-
         Gdx.input.setInputProcessor(stage);
     }
 

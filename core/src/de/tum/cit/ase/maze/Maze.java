@@ -58,6 +58,19 @@ public class Maze {
     }
 
     public void restart() {
+        for (Enemy enemy : enemies) {
+            enemy.goToOriginalPosition();
+        }
+
+        for (int x=0; x<m; x++) {
+            for (int y=0; y<n; y++) {
+                Tile tile = getTile(x, y);
+                if (tile != null) {
+                    tile.isInteracted = false;
+                    tile.isRevealed = false;
+                }
+            }
+        }
     }
 
     public ArrayList<Enemy> getEnemies() { return enemies; }

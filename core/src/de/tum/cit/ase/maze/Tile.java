@@ -9,6 +9,8 @@ public class Tile extends Collider {
     int x, y;
     private TileType type;
     public boolean isInteracted = false;
+    public boolean isPartiallyRevealed = false;
+    public boolean isRevealed = false;
 
     public Tile(int x, int y, TileType type) {
         super(new Rectangle(x*Constants.TILE_SIZE, y*Constants.TILE_SIZE, Constants.TILE_SIZE, Constants.TILE_SIZE));

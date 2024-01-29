@@ -51,6 +51,9 @@ public class Enemy extends MovableEntity {
         attackingEntity.update(delta);
     }
 
+    public void goToOriginalPosition() {
+        setPosition(origX*Constants.TILE_SIZE, origY*Constants.TILE_SIZE);
+    }
+
     public AttackingEntity getAttackingEntity() { return attackingEntity; }
 }
-

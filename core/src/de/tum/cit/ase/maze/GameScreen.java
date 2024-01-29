@@ -5,21 +5,19 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 /**
  * The GameScreen class is responsible for rendering the gameplay screen.
  * It handles the game logic and rendering of the game elements.
  */
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, CharacterListener {
     private final OrthographicCamera camera;
     private final GameState gameState;
-    private BitmapFont font;
-    private MazeRunnerGame game;
+    private final MazeRunnerGame game;
     private float time = 0f;
-    private HUD hud;
+    private final HUD hud;
+    private final DialogService dialogService;
 
     /**
      * Constructor for GameScreen. Sets up the camera and font.
@@ -28,34 +26,39 @@ public class GameScreen implements Screen {
      */
     public GameScreen(MazeRunnerGame game, Maze maze) {
         this.game = game;
-        gameState = new GameState(maze, new Character(maze));
+        gameState = new GameState(maze, new Character(maze, this));
         gameState.restart();
         this.hud = new HUD(game, gameState);
+        this.dialogService = new DialogService(game, this);
         // Create and configure the camera for the game view
         camera = new OrthographicCamera();
         camera.setToOrtho(false);
-        camera.zoom = 0.5f;
+        camera.zoom = 0.35f;
         camera.position.set(0, 0, 0);
-        this.font = new BitmapFont();
-        /* Get the font from the game's skin */
     }
 
     @Override
     public void render(float delta) {
         time += delta;
 
-        // Check for escape key press to go back to the menu
+        // Check for escape key press to pause game
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            game.goToMenu();
+            dialogService.showPauseDialog();
         }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
         camera.position.set(gameState.getCharacter().getPosition(), 0); // Camera follows player
         camera.update(); // Update the camera
-        handleInputs();
-        updateAttackingEntities(delta);
-        gameState.getCharacter().checkForCollision();
+
+        if (!dialogService.isDialogOpen()) {
+            handleInputs();
+            updateAttackingEntities(delta);
+            gameState.getCharacter().checkForCollision();
+            gameState.getCharacter().update(delta);
+            updateFogOfWar();
+        }
 
         // Set up and begin drawing with the sprite batch
         game.getSpriteBatch().setProjectionMatrix(camera.combined);
@@ -65,6 +68,7 @@ public class GameScreen implements Screen {
         drawMaze();
         drawTraps();
         drawEnemies();
+        drawFog();
         drawCharacter();
         game.getSpriteBatch().end(); // Important to call this after drawing everything
         hud.render(delta);
@@ -75,7 +79,8 @@ public class GameScreen implements Screen {
             for (int y=0; y<getMaze().getN(); y++) {
                 Tile tile = getMaze().getTile(x, y);
                 if (tile != null) {
-                    if (tile.getType() == TileType.KEY && tile.isInteracted) continue;
+                    if (!tile.isRevealed) continue;
+                    if ((tile.getType() == TileType.KEY || tile.getType() == TileType.SPEED) && tile.isInteracted) continue;
                     tile.draw(game.getSpriteBatch(), time);
                 } else {
                     game.getSpriteBatch().draw(
@@ -134,6 +139,27 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void drawFog() {
+        float startX = camera.position.x - camera.viewportWidth / 2;
+        float startY = camera.position.y - camera.viewportHeight / 2;
+        float endX = startX + camera.viewportWidth;
+        float endY = startY + camera.viewportHeight;
+
+        // Convert to tile coordinates
+        int tileStartX = (int) (startX / Constants.TILE_SIZE);
+        int tileStartY = (int) (startY / Constants.TILE_SIZE);
+        int tileEndX = (int) (endX / Constants.TILE_SIZE) + 1;
+        int tileEndY = (int) (endY / Constants.TILE_SIZE) + 1;
+
+        for (int x = tileStartX; x < tileEndX; x++) {
+            for (int y = tileStartY; y < tileEndY; y++) {
+                if (gameState.getFogOfWar().isFoggy(x, y)) {
+                    game.getSpriteBatch().draw(TextureProvider.getFogTexture(), x * Constants.TILE_SIZE, y * Constants.TILE_SIZE);
+                }
+            }
+        }
+    }
+
     private void drawCharacter() {
         game.getSpriteBatch().draw(
                 TextureProvider.getCharacterTexture(gameState.getCharacter().getLastDirection(), time),
@@ -166,6 +192,10 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void updateFogOfWar() {
+        gameState.getCharacter().updateFogOfWar(gameState.getFogOfWar());
+    }
+
     //
     @Override
     public void resize(int width, int height) {
@@ -175,7 +205,12 @@ public class GameScreen implements Screen {
         hud.resize(width, height);
     }
 
+    public void restart() {
+        gameState.restart();
+    }
+
     private Maze getMaze() { return gameState.getMaze(); }
+    public HUD getHud() { return hud; }
 
     @Override
     public void pause() {}
@@ -184,11 +219,47 @@ public class GameScreen implements Screen {
     public void resume() {}
 
     @Override
-    public void show() {}
+    public void show() {
+        Gdx.input.setInputProcessor(hud.getStage());
+    }
 
     @Override
     public void hide() {}
 
     @Override
     public void dispose() {}
+
+    @Override
+    public void onCollisionWithEnemy(Enemy enemy) {
+        SoundsProvider.playEnemyHitSound();
+    }
+
+    @Override
+    public void onCollisionWithTrap(Trap trap) {
+        SoundsProvider.playTrapTriggerSound();
+    }
+
+    @Override
+    public void onCollisionWithExit() {
+        if (gameState.getCharacter().hasEnoughKeys()) {
+            SoundsProvider.playMazeCompleteSound();
+            dialogService.showWinGameDialog();
+        }
+    }
+
+    @Override
+    public void onCollisionWithKey(Tile tile) {
+        SoundsProvider.playKeyPickSound();
+    }
+
+    @Override
+    public void onCollisionWithSpeed(Tile tile) {
+        SoundsProvider.playKeyPickSound();
+    }
+
+    @Override
+    public void onDead() {
+        SoundsProvider.playDeathSound();
+        dialogService.showLoseGameDialog();
+    }
 }
