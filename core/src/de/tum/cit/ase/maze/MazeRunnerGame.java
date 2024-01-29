@@ -48,13 +48,14 @@ public class MazeRunnerGame extends Game {
         spriteBatch.enableBlending();
         skin = new Skin(Gdx.files.internal("craft/craftacular-ui.json")); // Load UI skin
         TextureProvider.init(); // Initialize textures
+        SoundsProvider.init(); // Initialize sounds
         this.loadCharacterAnimation(); // Load character animation
 
         // Play some background music
         // Background sound
         Music backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
         backgroundMusic.setLooping(true);
-//        backgroundMusic.play();
+        backgroundMusic.play();
 
         goToMenu(); // Navigate to the menu screen
     }
@@ -63,7 +64,8 @@ public class MazeRunnerGame extends Game {
      * Switches to the menu screen.
      */
     public void goToMenu() {
-        this.setScreen(new MenuScreen(this)); // Set the current screen to MenuScreen
+        menuScreen = new MenuScreen(this);
+        this.setScreen(menuScreen); // Set the current screen to MenuScreen
         if (gameScreen != null) {
             gameScreen.dispose(); // Dispose the game screen if it exists
             gameScreen = null;
@@ -74,7 +76,8 @@ public class MazeRunnerGame extends Game {
      * Switches to the game screen.
      */
     public void goToGame() {
-        this.setScreen(new GameScreen(this, lastMaze)); // Set the current screen to GameScreen
+        gameScreen = new GameScreen(this, lastMaze);
+        this.setScreen(gameScreen); // Set the current screen to GameScreen
         if (menuScreen != null) {
             menuScreen.dispose(); // Dispose the menu screen if it exists
             menuScreen = null;

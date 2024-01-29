@@ -84,5 +84,8 @@ public class MovableEntity extends Collider {
     }
 
     public Direction getLastDirection() { return lastDirection; }
+
+    public void setMoveSpeed(float value) { moveSpeed = value; }
+    public float getMoveSpeed() { return moveSpeed; }
 }
 
