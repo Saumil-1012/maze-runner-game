@@ -57,7 +57,7 @@ public class MenuScreen implements Screen {
         table1.add(new Label("Maze Runner", game.getSkin(), "title")).padBottom(80).row();
 
         // Load background image
-        backgroundTexture = new Texture(Gdx.files.internal("photo1.jpg.png"));
+        backgroundTexture = new Texture(Gdx.files.internal("backgroundMenu.jpg"));
         // Create and add a button to go to the game screen
         // Add menu buttons
         TextButton startButton = new TextButton("Start", game.getSkin());
